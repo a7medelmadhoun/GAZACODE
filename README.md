@@ -6,7 +6,7 @@
 
 ## 📋 About GAZACODE
 
-GAZACODE is a powerful and comprehensive tool for writing and developing code with complete safety and professionalism. Developed by **Ahmed Elmadhoun** from Gaza to help developers accomplish their work with higher efficiency and productivity.
+GAZACODE is a powerful and comprehensive tool for writing and developing code with complete safety and professionalism. Developed by **Ahmed Elmadhoun** from Gaza to help developers accomplish their work efficiently and securely.
 
 ---
 
@@ -38,9 +38,31 @@ GAZACODE is a powerful and comprehensive tool for writing and developing code wi
 
 ---
 
-## 📥 Installation
+## 📥 Installation & Setup
 
-### Using npm (Recommended)
+### System Requirements
+- **Node.js** (v14.0.0 or higher)
+- **npm** (v6.0.0 or higher)
+- **Operating System**: Windows, macOS, or Linux
+- **RAM**: Minimum 2GB recommended
+- **Disk Space**: At least 500MB available
+
+### Downloading GAZACODE
+
+Clone the repository from GitHub:
+
+```bash
+git clone https://github.com/a7medelmadhoun/GAZACODE.git
+cd GAZACODE
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+### Installation via npm
 
 Install GAZACODE globally using npm:
 
@@ -48,58 +70,35 @@ Install GAZACODE globally using npm:
 npm install -g gazacode
 ```
 
-### Requirements
-- Node.js (v14.0.0 or higher)
-- npm (v6.0.0 or higher)
-
 ---
 
-## 🚀 Getting Started
+## 🚀 Running GAZACODE
 
-### Basic Usage
+### Launch GAZACODE
 
-After installation, you can start GAZACODE from your terminal:
+To start GAZACODE from your terminal:
 
 ```bash
 gazacode
 ```
 
-### Initialize a Project
+### Initialize Your Project
 
-To set up GAZACODE in your project:
+Set up GAZACODE in your project directory:
 
 ```bash
 gazacode init
 ```
 
-This will create a `.gazacode` configuration file in your project directory.
+This creates a `.gazacode` configuration file with your project settings.
 
-### Run GAZACODE
+### How GAZACODE Works
 
-Start writing and developing your code:
-
-```bash
-gazacode start
-```
-
-### Additional Commands
-
-```bash
-# Check version
-gazacode --version
-
-# View help
-gazacode --help
-
-# Update your skills profile
-gazacode skills
-
-# Access browser automation
-gazacode browser
-
-# Run in development mode
-gazacode dev
-```
+1. **Load** - GAZACODE loads your project configuration
+2. **Analyze** - It analyzes your code and requirements
+3. **Process** - Processes your requests with AI assistance
+4. **Execute** - Executes the requested operations securely
+5. **Report** - Provides you with results and recommendations
 
 ---
 
