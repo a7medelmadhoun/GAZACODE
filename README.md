@@ -138,6 +138,12 @@ We welcome contributions! Feel free to:
 
 ---
 
+## Website
+This is a link to a website that explains the steps to download the tool.
+https://gazacode.pages.dev/
+
+---
+
 ## 📄 License
 
 GAZACODE is free to use and is provided as-is for the development community.
