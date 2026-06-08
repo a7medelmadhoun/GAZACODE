@@ -361,17 +361,16 @@ export class ChatSession {
     }
 
     if (this.isPrompting) {
+      const line = this.currentInput;
+      const innerW = width - 4;
+      const prefixW = 2;
+      const maxTextW = innerW - prefixW;
       const promptChar = chalk.hex('#22c55e').bold('>');
-      const placeholderText = 'Type a message or CLI command...';
 
       // Horizontal divider
       process.stdout.write(this.boxPad() + borderChalk('├' + '─'.repeat(width - 2) + '┤\n'));
 
-      const line = this.currentInput;
-      const innerW = width - 4; // space between │ and │
-      const prefixW = 2; // "> "
-      const maxTextW = innerW - prefixW;
-
+      // Calculate visible window
       let startIdx = 0;
       if (line.length > maxTextW && this.currentCursor >= maxTextW) {
         startIdx = this.currentCursor - maxTextW + 5;
@@ -382,14 +381,17 @@ export class ChatSession {
       const visibleText = line.slice(startIdx, startIdx + maxTextW);
       const visibleCursor = this.currentCursor - startIdx;
 
-      // Build the content line: left border, prefix, text, padding (ensures right border stays)
+      // Build content line
       let contentLine = this.boxPad() + borderChalk('│ ');
       if (line.length === 0) {
-        contentLine += promptChar + ' ' + chalk.gray(placeholderText);
-        contentLine += ' '.repeat(innerW - prefixW - placeholderText.length);
+        const placeholder = 'Type a message or CLI command...';
+        contentLine += promptChar + ' ' + chalk.gray(placeholder);
+        contentLine += ' '.repeat(Math.max(0, innerW - prefixW - placeholder.length));
       } else {
-        contentLine += promptChar + ' ' + this.bidiWrap(visibleText);
-        contentLine += ' '.repeat(innerW - prefixW - visibleText.length);
+        const bidiText = this.bidiWrap(visibleText);
+        contentLine += promptChar + ' ' + bidiText;
+        const textWidth = this.displayWidth(visibleText);
+        contentLine += ' '.repeat(Math.max(0, innerW - prefixW - textWidth));
       }
       contentLine += borderChalk(' │');
       process.stdout.write(contentLine + '\n');
@@ -397,8 +399,8 @@ export class ChatSession {
       // Bottom border
       process.stdout.write(this.boxPad() + borderChalk('╰' + '─'.repeat(width - 2) + '╯'));
 
-      // Position cursor inside the input line (after "> ")
-      const col = this.boxPad().length + prefixW + 3 + visibleCursor; // 3 = border(1) + space(1) + ">" prefix space offset
+      // Position cursor
+      const col = this.boxPad().length + prefixW + 3 + visibleCursor;
       process.stdout.write(`\u001b[1A\u001b[${col}G`);
     } else {
       this.boxLine(width, '');
@@ -409,20 +411,27 @@ export class ChatSession {
     }
   }
 
-  /** Quickly redraw just the input content line (doesn't touch divider/border) */
+  /** Strip ANSI escape codes for width calculation */
+  private stripAnsi(text: string): string {
+    return text.replace(/\x1B\[[0-9;]*m/g, '');
+  }
+
+  /** Get display width of text (strips ANSI codes) */
+  private displayWidth(text: string): number {
+    return this.stripAnsi(text).length;
+  }
+
+  /** Redraw the input area inside the box */
   private refreshInputLine(): void {
     const width = this.boxWidth();
     const borderChalk = chalk.hex('#2d4a2b');
     const innerW = width - 4;
-    const prefixW = 2;
+    const prefixW = 2; // "> "
     const maxTextW = innerW - prefixW;
     const line = this.currentInput;
-
-    // Move cursor to the start of the content line (left border)
-    process.stdout.write('\u001b[' + (this.boxPad().length + 1) + 'G');
-
-    // Overwrite the entire content line: left border, prefix, text, padding, right border
     const promptChar = chalk.hex('#22c55e').bold('>');
+
+    // Calculate visible window (scrollable)
     let startIdx = 0;
     if (line.length > maxTextW && this.currentCursor >= maxTextW) {
       startIdx = this.currentCursor - maxTextW + 5;
@@ -433,18 +442,26 @@ export class ChatSession {
     const visibleText = line.slice(startIdx, startIdx + maxTextW);
     const visibleCursor = this.currentCursor - startIdx;
 
+    // Build the content line
     let contentLine = borderChalk('│ ');
     if (line.length === 0) {
-      contentLine += promptChar + ' ' + chalk.gray('Type a message or CLI command...');
-      contentLine += ' '.repeat(innerW - prefixW - 'Type a message or CLI command...'.length);
+      const placeholder = 'Type a message or CLI command...';
+      contentLine += promptChar + ' ' + chalk.gray(placeholder);
+      contentLine += ' '.repeat(Math.max(0, innerW - prefixW - placeholder.length));
     } else {
-      contentLine += promptChar + ' ' + this.bidiWrap(visibleText);
-      contentLine += ' '.repeat(innerW - prefixW - visibleText.length);
+      const bidiText = this.bidiWrap(visibleText);
+      contentLine += promptChar + ' ' + bidiText;
+      const textWidth = this.displayWidth(visibleText);
+      contentLine += ' '.repeat(Math.max(0, innerW - prefixW - textWidth));
     }
     contentLine += borderChalk(' │');
+
+    // Move to start of content line and redraw it
+    process.stdout.write('\u001b[' + (this.boxPad().length + 1) + 'G');
+    process.stdout.write('\u001b[2K'); // clear the line
     process.stdout.write(contentLine);
 
-    // Position cursor inside the content line (after "│ > ")
+    // Position cursor inside the content line
     const col = this.boxPad().length + prefixW + 3 + visibleCursor;
     process.stdout.write(`\u001b[${col}G`);
   }
