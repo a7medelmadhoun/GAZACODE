@@ -1,6 +1,6 @@
 {
   "name": "gazacode",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "description": "GAZACODE — a beautiful multi-provider AI chat CLI with Skills & MCP (OpenAI, Gemini, Anthropic, OpenRouter, OpenCode Zen)",
   "type": "module",
   "main": "./dist/index.js",
